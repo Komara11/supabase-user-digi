@@ -14,12 +14,9 @@ export default function Home() {
   const [message, setMessage] = useState('')
   const [dataPengguna, setDataPengguna] = useState([])
   const [loading, setLoading] = useState(false)
-
-  // Pagination state
   const [page, setPage] = useState(1)
   const limit = 5
 
-  // Fetch data dengan pagination
   const fetchData = async (page = 1) => {
     setLoading(true)
     const from = (page - 1) * limit
@@ -54,7 +51,6 @@ export default function Home() {
     setMessage('')
 
     if (form.id === null) {
-      // Insert data baru
       const { error } = await supabase
         .from('data_pengguna')
         .insert([{
@@ -79,7 +75,6 @@ export default function Home() {
         fetchData(page)
       }
     } else {
-      // Update data
       const { error } = await supabase
         .from('data_pengguna')
         .update({
@@ -155,85 +150,74 @@ export default function Home() {
     setMessage('')
   }
 
+  // Download CSV
+  const handleDownloadCSV = async () => {
+    const { data, error } = await supabase
+      .from('data_pengguna')
+      .select('*')
+      .order('id', { ascending: true })
+
+    if (error || !data) {
+      alert('Gagal mengambil data untuk diunduh.')
+      return
+    }
+
+    const headers = ['Nama Pengguna', 'Alamat', 'Kategori', 'Tipe', 'Tanggal']
+    const rows = data.map(item => [
+      item.nama_pengguna,
+      item.alamat,
+      item.kategori,
+      item.tipe,
+      item.tanggal ? item.tanggal.slice(0, 10) : ''
+    ])
+    const csvContent = [headers, ...rows].map(e => e.join(',')).join('\n')
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.setAttribute('href', url)
+    link.setAttribute('download', 'data_pengguna.csv')
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
+
   return (
     <div className="max-w-xl mx-auto p-4 font-sans">
       <h1 className="text-2xl font-bold mb-4 text-center">Form Tambah Data Pengguna</h1>
 
       <form onSubmit={handleSubmit} className="bg-gray-100 p-6 rounded-lg shadow-md mb-6 space-y-4">
-        <input
-          type="text"
-          name="nama_pengguna"
-          placeholder="Nama Pengguna"
-          value={form.nama_pengguna}
-          onChange={handleChange}
-          required
-          className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-400"
-        />
-
-        <input
-          type="text"
-          name="alamat"
-          placeholder="Alamat"
-          value={form.alamat}
-          onChange={handleChange}
-          required
-          className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-400"
-        />
-
-        <select
-          name="kategori"
-          value={form.kategori}
-          onChange={handleChange}
-          required
-          className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-400"
-        >
+        <input type="text" name="nama_pengguna" placeholder="Nama Pengguna" value={form.nama_pengguna} onChange={handleChange} required className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-400" />
+        <input type="text" name="alamat" placeholder="Alamat" value={form.alamat} onChange={handleChange} required className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-400" />
+        <select name="kategori" value={form.kategori} onChange={handleChange} required className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-400">
           <option value="" disabled>-- Pilih Kategori --</option>
           <option value="Perorangan">Perorangan</option>
           <option value="Pedagang">Pedagang</option>
         </select>
-
-        <select
-          name="tipe"
-          value={form.tipe}
-          onChange={handleChange}
-          required
-          className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-400"
-        >
+        <select name="tipe" value={form.tipe} onChange={handleChange} required className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-400">
           <option value="" disabled>-- Pilih Tipe --</option>
           <option value="Nonreferal">Nonreferal</option>
           <option value="Referal">Referal</option>
         </select>
-
-        <input
-          type="date"
-          name="tanggal"
-          placeholder="Tanggal"
-          value={form.tanggal}
-          onChange={handleChange}
-          required
-          className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-400"
-        />
-
+        <input type="date" name="tanggal" placeholder="Tanggal" value={form.tanggal} onChange={handleChange} required className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-400" />
         <div className="flex gap-4">
-          <button
-            type="submit"
-            className="flex-1 bg-green-600 text-white py-3 rounded hover:bg-green-700 transition"
-          >
+          <button type="submit" className="flex-1 bg-green-600 text-white py-3 rounded hover:bg-green-700 transition">
             {form.id === null ? 'Simpan' : 'Update'}
           </button>
           {form.id !== null && (
-            <button
-              type="button"
-              onClick={handleCancelEdit}
-              className="flex-1 bg-red-600 text-white py-3 rounded hover:bg-red-700 transition"
-            >
+            <button type="button" onClick={handleCancelEdit} className="flex-1 bg-red-600 text-white py-3 rounded hover:bg-red-700 transition">
               Batal
             </button>
           )}
         </div>
       </form>
 
-      <h2 className="text-xl font-semibold mb-4">Daftar Data Pengguna</h2>
+      <div className="flex justify-between items-center mb-2">
+        <h2 className="text-xl font-semibold">Daftar Data Pengguna</h2>
+        <button onClick={handleDownloadCSV} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+          Eksport Data
+        </button>
+      </div>
+
       {loading ? (
         <p>Loading data...</p>
       ) : (
@@ -263,16 +247,10 @@ export default function Home() {
                     <td className="border border-gray-300 p-2">{item.tipe}</td>
                     <td className="border border-gray-300 p-2">{item.tanggal ? item.tanggal.slice(0, 10) : ''}</td>
                     <td className="border border-gray-300 p-2 space-x-2">
-                      <button
-                        onClick={() => handleEdit(item)}
-                        className="px-3 py-1 bg-yellow-400 rounded hover:bg-yellow-500 text-white"
-                      >
+                      <button onClick={() => handleEdit(item)} className="px-3 py-1 bg-yellow-400 rounded hover:bg-yellow-500 text-white">
                         Edit
                       </button>
-                      <button
-                        onClick={() => handleDelete(item.id)}
-                        className="px-3 py-1 bg-red-500 rounded hover:bg-red-600 text-white"
-                      >
+                      <button onClick={() => handleDelete(item.id)} className="px-3 py-1 bg-red-500 rounded hover:bg-red-600 text-white">
                         Hapus
                       </button>
                     </td>
@@ -284,20 +262,12 @@ export default function Home() {
         </div>
       )}
 
-      {/* Pagination Controls */}
       <div className="flex justify-center mt-4 space-x-4">
-        <button
-          onClick={() => setPage(old => Math.max(old - 1, 1))}
-          disabled={page === 1}
-          className={`px-4 py-2 rounded ${page === 1 ? 'bg-gray-300 cursor-not-allowed' : 'bg-green-600 text-white hover:bg-green-700'}`}
-        >
+        <button onClick={() => setPage(old => Math.max(old - 1, 1))} disabled={page === 1} className={`px-4 py-2 rounded ${page === 1 ? 'bg-gray-300 cursor-not-allowed' : 'bg-green-600 text-white hover:bg-green-700'}`}>
           Prev
         </button>
         <span className="flex items-center">Page {page}</span>
-        <button
-          onClick={() => setPage(old => old + 1)}
-          className="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700"
-        >
+        <button onClick={() => setPage(old => old + 1)} className="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700">
           Next
         </button>
       </div>
