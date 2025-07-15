@@ -8,6 +8,7 @@ export default function Home() {
     nama_pengguna: '',
     alamat: '',
     no_hp: '',
+    email: '',
     kategori: '',
     tipe: '',
     tanggal: ''
@@ -59,6 +60,7 @@ export default function Home() {
           nama_pengguna: form.nama_pengguna,
           alamat: form.alamat,
           no_hp: form.no_hp,
+          email: form.email,
           kategori: form.kategori,
           tipe: form.tipe,
           tanggal: form.tanggal
@@ -77,6 +79,7 @@ export default function Home() {
           nama_pengguna: form.nama_pengguna,
           alamat: form.alamat,
           no_hp: form.no_hp,
+          email: form.email,
           kategori: form.kategori,
           tipe: form.tipe,
           tanggal: form.tanggal
@@ -98,6 +101,7 @@ export default function Home() {
       nama_pengguna: '',
       alamat: '',
       no_hp: '',
+      email: '',
       kategori: '',
       tipe: '',
       tanggal: ''
@@ -110,6 +114,7 @@ export default function Home() {
       nama_pengguna: item.nama_pengguna,
       alamat: item.alamat,
       no_hp: item.no_hp,
+      email: item.email,
       kategori: item.kategori,
       tipe: item.tipe,
       tanggal: item.tanggal ? item.tanggal.slice(0, 10) : ''
@@ -148,11 +153,12 @@ export default function Home() {
       return
     }
 
-    const headers = ['Nama Pengguna', 'Alamat', 'No HP', 'Kategori', 'Tipe', 'Tanggal']
+    const headers = ['Nama Pengguna', 'Alamat', 'No HP', 'Email', 'Kategori', 'Tipe', 'Tanggal']
     const rows = data.map(item => [
       item.nama_pengguna,
       item.alamat,
       item.no_hp,
+      item.email,
       item.kategori,
       item.tipe,
       item.tanggal ? item.tanggal.slice(0, 10) : ''
@@ -173,22 +179,23 @@ export default function Home() {
       <h1 className="text-2xl font-bold mb-4 text-center">Form Tambah Data Pengguna</h1>
 
       <form onSubmit={handleSubmit} className="bg-gray-100 p-4 md:p-6 rounded-lg shadow-md mb-6 space-y-4">
-        <input type="text" name="nama_pengguna" placeholder="Nama Pengguna" value={form.nama_pengguna} onChange={handleChange} required className="w-full p-3 border border-gray-300 rounded text-sm md:text-base" />
-        <input type="text" name="alamat" placeholder="Alamat" value={form.alamat} onChange={handleChange} required className="w-full p-3 border border-gray-300 rounded text-sm md:text-base" />
-        <input type="text" name="no_hp" placeholder="No HP" value={form.no_hp} onChange={handleChange} required className="w-full p-3 border border-gray-300 rounded text-sm md:text-base" />
-        <select name="kategori" value={form.kategori} onChange={handleChange} required className="w-full p-3 border border-gray-300 rounded text-sm md:text-base">
+        <input type="text" name="nama_pengguna" placeholder="Nama Pengguna" value={form.nama_pengguna} onChange={handleChange} required className="w-full p-3 border border-gray-300 rounded" />
+        <input type="text" name="alamat" placeholder="Alamat" value={form.alamat} onChange={handleChange} required className="w-full p-3 border border-gray-300 rounded" />
+        <input type="text" name="no_hp" placeholder="No HP" value={form.no_hp} onChange={handleChange} required className="w-full p-3 border border-gray-300 rounded" />
+        <input type="email" name="email" placeholder="Email" value={form.email} onChange={handleChange} required className="w-full p-3 border border-gray-300 rounded" />
+        <select name="kategori" value={form.kategori} onChange={handleChange} required className="w-full p-3 border border-gray-300 rounded">
           <option value="" disabled>-- Pilih Kategori --</option>
           <option value="Perorangan">Perorangan</option>
           <option value="Pedagang">Pedagang</option>
         </select>
-        <select name="tipe" value={form.tipe} onChange={handleChange} required className="w-full p-3 border border-gray-300 rounded text-sm md:text-base">
+        <select name="tipe" value={form.tipe} onChange={handleChange} required className="w-full p-3 border border-gray-300 rounded">
           <option value="" disabled>-- Pilih Tipe --</option>
           <option value="Nonreferal">Nonreferal</option>
           <option value="Referal">Referal</option>
         </select>
-        <input type="date" name="tanggal" placeholder="Tanggal" value={form.tanggal} onChange={handleChange} required className="w-full p-3 border border-gray-300 rounded text-sm md:text-base" />
+        <input type="date" name="tanggal" value={form.tanggal} onChange={handleChange} required className="w-full p-3 border border-gray-300 rounded" />
 
-        <div className="flex flex-col md:flex-row gap-2 md:gap-4">
+        <div className="flex flex-col md:flex-row gap-2">
           <button type="submit" className="flex-1 bg-green-600 text-white py-3 rounded hover:bg-green-700 transition">
             {form.id === null ? 'Simpan' : 'Update'}
           </button>
@@ -214,19 +221,20 @@ export default function Home() {
           <table className="w-full border-collapse border border-gray-300 text-xs md:text-sm">
             <thead className="bg-gray-200">
               <tr>
-                <th className="border border-gray-300 p-2 text-left">Nama</th>
-                <th className="border border-gray-300 p-2 text-left">Alamat</th>
-                <th className="border border-gray-300 p-2 text-left">No HP</th>
-                <th className="border border-gray-300 p-2 text-left">Kategori</th>
-                <th className="border border-gray-300 p-2 text-left">Tipe</th>
-                <th className="border border-gray-300 p-2 text-left">Tanggal</th>
-                <th className="border border-gray-300 p-2 text-left">Aksi</th>
+                <th className="border border-gray-300 p-2">Nama</th>
+                <th className="border border-gray-300 p-2">Alamat</th>
+                <th className="border border-gray-300 p-2">No HP</th>
+                <th className="border border-gray-300 p-2">Email</th>
+                <th className="border border-gray-300 p-2">Kategori</th>
+                <th className="border border-gray-300 p-2">Tipe</th>
+                <th className="border border-gray-300 p-2">Tanggal</th>
+                <th className="border border-gray-300 p-2">Aksi</th>
               </tr>
             </thead>
             <tbody>
               {dataPengguna.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="text-center p-4">Belum ada data</td>
+                  <td colSpan={8} className="text-center p-4">Belum ada data</td>
                 </tr>
               ) : (
                 dataPengguna.map(item => (
@@ -234,6 +242,7 @@ export default function Home() {
                     <td className="border border-gray-300 p-2">{item.nama_pengguna}</td>
                     <td className="border border-gray-300 p-2">{item.alamat}</td>
                     <td className="border border-gray-300 p-2">{item.no_hp}</td>
+                    <td className="border border-gray-300 p-2">{item.email}</td>
                     <td className="border border-gray-300 p-2">{item.kategori}</td>
                     <td className="border border-gray-300 p-2">{item.tipe}</td>
                     <td className="border border-gray-300 p-2">{item.tanggal ? item.tanggal.slice(0, 10) : ''}</td>
